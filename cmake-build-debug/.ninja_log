@@ -1,0 +1,16 @@
+# ninja log v5
+12	959	7316361019656453	CMakeFiles/OOP_Project.dir/src/gameManager.cpp.obj	b0c3809ce33d578f
+1	216	7316372131192208	build.ninja	5cfc02c0588438e2
+16	758	7316370685004668	CMakeFiles/OOP_Project.dir/main.cpp.obj	665d893c2549a2ba
+1369	2720	7316371402811996	OOP_Project.exe	85d56b7f6d16ddc0
+6	1368	7316371393175474	CMakeFiles/OOP_Project.dir/src/card.cpp.obj	1657c11828964e0e
+9	945	7316359590948490	CMakeFiles/OOP_Project.dir/src/player.cpp.obj	3778563989861d3e
+13	897	7316352201208068	CMakeFiles/OOP_Project.dir/src/enemy.cpp.obj	2316c9e030f5c033
+13	626	7316372746510266	CMakeFiles/OOP_Project.dir/main.cpp.obj	665d893c2549a2ba
+628	892	7316372749083797	OOP_Project.exe	85d56b7f6d16ddc0
+6	627	7316372854086878	CMakeFiles/OOP_Project.dir/main.cpp.obj	665d893c2549a2ba
+628	819	7316372855932412	OOP_Project.exe	85d56b7f6d16ddc0
+6	666	7316372948729202	CMakeFiles/OOP_Project.dir/main.cpp.obj	665d893c2549a2ba
+667	908	7316372951107765	OOP_Project.exe	85d56b7f6d16ddc0
+5	778	7316375300173232	CMakeFiles/OOP_Project.dir/main.cpp.obj	665d893c2549a2ba
+779	1031	7316375302606662	OOP_Project.exe	85d56b7f6d16ddc0
