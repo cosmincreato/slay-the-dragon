@@ -41,7 +41,7 @@ void GameManager::init_stats() {
 }
 
 GameManager::GameManager() {
-    cout << "Game Constructor\n";
+    // cout << "Game Constructor\n";
     string diff, name;
     cout << "What is your name?\n";
     getline(cin, name);
@@ -60,7 +60,7 @@ GameManager::GameManager() {
 }
 
 GameManager::~GameManager() {
-    cout<<"Game Destructor\n";
+    // cout<<"Game Destructor\n";
 }
 
 unsigned int GameManager::get_difficulty() const {
@@ -75,9 +75,13 @@ Enemy GameManager::get_enemy() const {
     return enemy;
 }
 
+
 void GameManager::start() {
     cout << "[Round " << ++round << "]\n";
     player.set_energy(player.get_max_energy());
-    cout << get_player();
-    cout << get_enemy();
+    cout << player;
+    cout << '\n';
+    cout << enemy;
+    cout << '\n';
+    player.get_card_list().show_hand();
 }

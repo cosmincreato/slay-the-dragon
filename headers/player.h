@@ -1,6 +1,7 @@
 #pragma once
 
 #include <iostream>
+#include "cardList.h"
 
 using namespace std;
 
@@ -10,6 +11,7 @@ private:
     const unsigned int max_energy = 3;
     unsigned int max_hp;
     int hp, energy;
+    CardList card_list;
 public:
 
     ///Constructors and destructors
@@ -28,6 +30,7 @@ public:
     int get_max_hp() const;
     int get_energy() const;
     int get_max_energy() const;
+    CardList get_card_list() const;
 
     ///Operator overloading
 

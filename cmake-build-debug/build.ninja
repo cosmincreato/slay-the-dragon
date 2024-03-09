@@ -79,6 +79,12 @@ build CMakeFiles/OOP_Project.dir/src/enemy.cpp.obj: CXX_COMPILER__OOP_Project_un
   OBJECT_DIR = CMakeFiles\OOP_Project.dir
   OBJECT_FILE_DIR = CMakeFiles\OOP_Project.dir\src
 
+build CMakeFiles/OOP_Project.dir/src/cardList.cpp.obj: CXX_COMPILER__OOP_Project_unscanned_Debug C$:/Users/Cosmin/Desktop/OOP_Project/src/cardList.cpp || cmake_object_order_depends_target_OOP_Project
+  DEP_FILE = CMakeFiles\OOP_Project.dir\src\cardList.cpp.obj.d
+  FLAGS = -g -std=gnu++14 -fdiagnostics-color=always
+  OBJECT_DIR = CMakeFiles\OOP_Project.dir
+  OBJECT_FILE_DIR = CMakeFiles\OOP_Project.dir\src
+
 
 # =============================================================================
 # Link build statements for EXECUTABLE target OOP_Project
@@ -87,7 +93,7 @@ build CMakeFiles/OOP_Project.dir/src/enemy.cpp.obj: CXX_COMPILER__OOP_Project_un
 #############################################
 # Link the executable OOP_Project.exe
 
-build OOP_Project.exe: CXX_EXECUTABLE_LINKER__OOP_Project_Debug CMakeFiles/OOP_Project.dir/main.cpp.obj CMakeFiles/OOP_Project.dir/src/card.cpp.obj CMakeFiles/OOP_Project.dir/src/gameManager.cpp.obj CMakeFiles/OOP_Project.dir/src/player.cpp.obj CMakeFiles/OOP_Project.dir/src/enemy.cpp.obj
+build OOP_Project.exe: CXX_EXECUTABLE_LINKER__OOP_Project_Debug CMakeFiles/OOP_Project.dir/main.cpp.obj CMakeFiles/OOP_Project.dir/src/card.cpp.obj CMakeFiles/OOP_Project.dir/src/gameManager.cpp.obj CMakeFiles/OOP_Project.dir/src/player.cpp.obj CMakeFiles/OOP_Project.dir/src/enemy.cpp.obj CMakeFiles/OOP_Project.dir/src/cardList.cpp.obj
   FLAGS = -g
   LINK_LIBRARIES = -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
   OBJECT_DIR = CMakeFiles\OOP_Project.dir

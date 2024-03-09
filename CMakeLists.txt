@@ -12,4 +12,6 @@ add_executable(OOP_Project
         src/player.cpp
         headers/player.h
         src/enemy.cpp
-        headers/enemy.h)
+        headers/enemy.h
+        src/cardList.cpp
+        headers/cardList.h)

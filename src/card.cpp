@@ -37,7 +37,7 @@ Card::Card()
     attack(0),
     shield(0),
     id(++count) {
-    cout << "Constructor apelat (ID: " << id << ")\n";
+    // cout << "Card constructor (ID: " << id << ")\n";
 }
 
 Card::Card(string _name, string _info, unsigned int _cost, unsigned int _attack, unsigned int _shield)
@@ -47,7 +47,7 @@ Card::Card(string _name, string _info, unsigned int _cost, unsigned int _attack,
     attack(_attack),
     shield(_shield),
     id(++count) {
-    cout << "Constructor apelat (ID: " << id << ")\n";
+    // cout << "Card constructor (ID: " << id << ")\n";
 }
 
 Card::Card(const Card& c)
@@ -57,12 +57,12 @@ Card::Card(const Card& c)
     attack(c.attack),
     shield(c.shield),
     id(++count) {
-    cout << "Copy constructor (ID: " << id << ")\n";
+    // cout << "Card Copy constructor (ID: " << id << ")\n";
 }
 
 Card::~Card()
 {
-    cout << "Destructor apelat\n";
+    // cout << "Card Destructor\n";
 }
 
 ///Setters

@@ -7,12 +7,13 @@ Player::Player()
 :   name("Player"),
     hp(0),
     max_hp(0),
-    energy(0) {
-    cout << "Player Constructor\n";
+    energy(0),
+    card_list() {
+    // cout << "Player Constructor\n";
 }
 
 Player::~Player() {
-    cout<< "Player Destructor\n";
+    // cout<< "Player Destructor\n";
 }
 
 void Player::set_name(string _name) {
@@ -49,6 +50,10 @@ int Player::get_energy() const {
 
 int Player::get_max_energy() const {
     return max_energy;
+}
+
+CardList Player::get_card_list() const {
+    return card_list;
 }
 
 ostream& operator<<(ostream& os, const Player& player)

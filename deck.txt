@@ -1,0 +1,13 @@
+Strike, Deal 6 damage., 1, 6, 0
+Strike, Deal 6 damage., 1, 6, 0
+Strike, Deal 6 damage., 1, 6, 0
+Strike, Deal 6 damage., 1, 6, 0
+Strike, Deal 6 damage., 1, 6, 0
+Defend, Gain 5 block., 1, 0, 5
+Defend, Gain 5 block., 1, 0, 5
+Defend, Gain 5 block., 1, 0, 5
+Defend, Gain 5 block., 1, 0, 5
+Defend, Gain 5 block., 1, 0, 5
+Iron Wave, Deal 5 damage. Gain 5 block, 2, 5, 5
+Iron Wave, Deal 5 damage. Gain 5 block, 2, 5, 5
+Iron Wave, Deal 5 damage. Gain 5 block, 2, 5, 5

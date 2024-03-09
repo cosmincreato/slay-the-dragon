@@ -7,11 +7,11 @@ Enemy::Enemy()
 :   attack(0),
     hp(0),
     max_hp(0) {
-    cout << "Enemy Constructor\n";
+    // cout << "Enemy Constructor\n";
 }
 
 Enemy::~Enemy() {
-    cout << "Enemy Destructor\n";
+    // cout << "Enemy Destructor\n";
 }
 
 void Enemy::set_attack(int _attack) {
