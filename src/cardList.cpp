@@ -1,26 +1,36 @@
 #include <iostream>
+#include <fstream>
+#include <sstream>
+#include <vector>
 #include "../headers/cardList.h"
 
 using namespace std;
+ifstream fin("../deck.txt");
+
+vector<string> split_card(const string& s, char delim) {
+    vector<string> result;
+    stringstream ss (s);
+    string item;
+
+    while (getline (ss, item, delim)) {
+        result.push_back (item);
+    }
+
+    return result;
+}
 
 CardList::CardList() {
-    // cout << "CardList Constructor\n";
+     //cout << "CardList Constructor\n";
 
-    ///Create the Deck
-    deck.emplace_back("Strike", "Deal 6 damage", 1, 6, 0);
-    deck.emplace_back("Strike", "Deal 6 damage", 1, 6, 0);
-    deck.emplace_back("Strike", "Deal 6 damage", 1, 6, 0);
-    deck.emplace_back("Strike", "Deal 6 damage", 1, 6, 0);
-    deck.emplace_back("Strike", "Deal 6 damage", 1, 6, 0);
-    deck.emplace_back("Defend", "Gain 5 block", 1, 0, 5);
-    deck.emplace_back("Defend", "Gain 5 block", 1, 0, 5);
-    deck.emplace_back("Defend", "Gain 5 block", 1, 0, 5);
-    deck.emplace_back("Defend", "Gain 5 block", 1, 0, 5);
-    deck.emplace_back("Defend", "Gain 5 block", 1, 0, 5);
-    deck.emplace_back("Iron Wave","Deal 5 damage. Gain 5 block.",2,5,5);
-    deck.emplace_back("Iron Wave","Deal 5 damage. Gain 5 block.",2,5,5);
-    deck.emplace_back("Iron Wave","Deal 5 damage. Gain 5 block.",2,5,5);
+    ///Create the Deck using the "deck.txt" file
+    string card;
+    while (getline(fin, card))
+    {
+        vector<string> sp = split_card(card, ',');
+        deck.emplace_back(sp);
+    }
 }
+
 CardList::~CardList() {
     // cout << "CardList Destructor\n";
 }

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <iostream>
+#include <vector>
 
 using namespace std;
 
@@ -16,6 +17,7 @@ public:
 
     Card();
     Card(string _name, string _info, unsigned int _cost, unsigned int _attack, unsigned int _shield);
+    Card(vector<string> _card);
     Card(const Card& c);
     ~Card();
 

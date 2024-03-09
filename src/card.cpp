@@ -50,6 +50,49 @@ Card::Card(string _name, string _info, unsigned int _cost, unsigned int _attack,
     // cout << "Card constructor (ID: " << id << ")\n";
 }
 
+Card::Card(vector<std::string> _card): id(++count) {
+    unsigned int index = 0;
+    /// Catch card format exception
+    try
+    {
+        if (_card.size() != 5)
+            throw (_card.size());
+    }
+    catch (size_t err_size) {
+        cout << "Wrong card format. Expected 5 values, only received " << err_size << ".\n";
+        exit(1);
+    }
+
+    /// Catch card number exception
+    for (auto it = _card.begin(); it != _card.end(); ++it, ++index)
+    {
+
+        if (index >= 2 && index <= 4)
+        {
+            try {
+                if (!valid_number(*it))
+                    throw (*it);
+            }
+            catch (string err_int) {
+                cout << "Expected a number while parsing card data. Received a string (" << err_int << ").\n";
+                exit(1);
+            }
+        }
+
+        if (index == 0)
+            name = *it;
+        else if (index == 1)
+            info = *it;
+        else if (index == 2)
+            cost = stoi(*it);
+        else if (index == 3)
+            attack = stoi(*it);
+        else if (index == 4)
+            shield = stoi(*it);
+    }
+}
+
+
 Card::Card(const Card& c)
 :   name(c.name),
     info(c.info),
