@@ -161,6 +161,6 @@ void GameManager::start_round() {
 
 void GameManager::start() {
     /// Start the round cycle
-    while (enemy.get_hp() > 0)
+    while (enemy.get_hp() > 0 && player.get_hp() > 0)
         start_round();
 }
