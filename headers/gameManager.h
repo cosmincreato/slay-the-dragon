@@ -14,6 +14,7 @@ private:
 
     void start_round();
     void init_stats();
+    void ui();
 
 public:
     /// Constructors and destructors
@@ -34,6 +35,4 @@ public:
     ///
 
     void start();
-
-    friend void next_round(GameManager& game);
 };

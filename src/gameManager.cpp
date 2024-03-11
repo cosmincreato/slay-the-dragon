@@ -21,15 +21,33 @@ const unsigned int PLAYER_MAX_HP[3] = {
 
 unsigned int GameManager::round = 0;
 
-inline bool valid_difficulty(const string& diff)
+bool valid_num(const string& s)
 {
-    ///Not a number
-    for (char i : diff)
+    for (char i : s)
         if (!isdigit(i))
             return false;
 
+    return true;
+}
+
+bool valid_difficulty(const string& diff)
+{
+    ///Not a number
+    if (!valid_num(diff))
+        return false;
+
     int d = stoi(diff);
     return (d >= 0 && d <=2);
+}
+
+bool valid_card(const string& card, int max_range)
+{
+    ///Not a number
+    if (!valid_num(card))
+        return false;
+
+    int c = stoi(card);
+    return (c >= 0 && c <= max_range);
 }
 
 void GameManager::init_stats() {
@@ -75,34 +93,65 @@ Enemy GameManager::get_enemy() const {
     return enemy;
 }
 
+void GameManager::ui() {
+    int hand_index = 1;
+    cout << player << '\n';
+    cout << "[Your Hand]\n";
+    for (const Card& card : player.get_hand())
+        cout << '(' << hand_index++ << ") " << card;
+    cout << '\n' << enemy << '\n';
+}
+
 void GameManager::start_round() {
     cout << "[Round " << ++round << "]\n";
 
     /// Refresh the player's energy
     player.set_energy(player.get_max_energy());
-
-    cout << player;
-    cout << '\n';
-
     /// The player draws 5 at the start of the round
     player.draw(5);
-    cout << "[Your Hand]\n";
-    for (const Card& card : player.get_hand())
-        cout << card;
+    ui();
 
-    ///
+    ///Card choices during the round
+    int played_card, hand_size;
+    string _played_card;
+    Card card;
+    while (true)
+    {
+        hand_size = player.get_hand().size();
+        cout << "Enter a number between 1 and " << hand_size << " to play a card, or 0 to end your turn.\n";
+        cin >> _played_card;
+        while (!valid_card(_played_card, hand_size))
+        {
+            cout << "Expected a number between 0 and "<< hand_size << ". Try again.\n";
+            cin >> _played_card;
+        }
+        played_card = stoi(_played_card);
+        /// End turn
+        if (played_card == 0)
+            break;
+        card = *(player.get_hand().begin() + played_card - 1);
+        if (player.get_energy() < card.get_cost())
+        {
+            cout << "You don't have enough energy to play this card.\n";
+            ui();
+        }
+        else
+        {
+            player.play(card);
+            /// Deal damage to the enemy
+            enemy.set_hp(enemy.get_hp() - card.get_attack());
+            ui();
+        }
+    }
 
-    cout << enemy;
-    cout << '\n';
+    /// Enemy action
 
     /// The player discards at the end of the round
     player.discard();
-
-    cout << endl;
 }
 
 void GameManager::start() {
     /// Start the round cycle
-    //start_round();
-    start_round();
+    while (enemy.get_hp() > 0)
+        start_round();
 }

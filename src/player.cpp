@@ -108,6 +108,7 @@ ostream& operator<<(ostream& os, const Player& player)
 
 void Player::play(const Card& card) {
     block += card.get_block();
+    energy -= card.get_cost();
 
     deck.emplace_back(card);
     shuffle_deck();
