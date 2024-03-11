@@ -6,7 +6,7 @@ using namespace std;
 
 class Enemy {
 private:
-    const string name = "Pizdoiu";
+    const string name = "Dragon";
     int attack, hp, max_hp;
 public:
     ///Constructors and destructors

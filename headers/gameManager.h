@@ -12,6 +12,9 @@ private:
     Player player;
     Enemy enemy;
 
+    void start_round();
+    void init_stats();
+
 public:
     /// Constructors and destructors
     GameManager();
@@ -31,5 +34,6 @@ public:
     ///
 
     void start();
-    void init_stats();
+
+    friend void next_round(GameManager& game);
 };

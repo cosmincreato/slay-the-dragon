@@ -21,11 +21,11 @@ const unsigned int PLAYER_MAX_HP[3] = {
 
 unsigned int GameManager::round = 0;
 
-inline bool valid_difficulty(string diff)
+inline bool valid_difficulty(const string& diff)
 {
     ///Not a number
-    for (int i = 0; i<diff.length(); ++i)
-        if (!isdigit(diff[i]))
+    for (char i : diff)
+        if (!isdigit(i))
             return false;
 
     int d = stoi(diff);
@@ -75,13 +75,34 @@ Enemy GameManager::get_enemy() const {
     return enemy;
 }
 
-
-void GameManager::start() {
+void GameManager::start_round() {
     cout << "[Round " << ++round << "]\n";
+
+    /// Refresh the player's energy
     player.set_energy(player.get_max_energy());
+
     cout << player;
     cout << '\n';
+
+    /// The player draws 5 at the start of the round
+    player.draw(5);
+    cout << "[Your Hand]\n";
+    for (const Card& card : player.get_hand())
+        cout << card;
+
+    ///
+
     cout << enemy;
     cout << '\n';
-    player.get_card_list().show_hand();
+
+    /// The player discards at the end of the round
+    player.discard();
+
+    cout << endl;
+}
+
+void GameManager::start() {
+    /// Start the round cycle
+    //start_round();
+    start_round();
 }

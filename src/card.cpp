@@ -1,21 +1,23 @@
 #include <iostream>
+#include <utility>
 #include "../headers/card.h"
 
 using namespace std;
 
 const unsigned int MIN_COST = 0, MAX_COST = 3;
+
 unsigned int Card::count = 0;
 
-bool valid_number(string s)
+bool valid_number(const string& s)
 {
-    for (int i = 0; i<s.length(); ++i)
-        if (!isdigit(s[i]))
+    for (char i : s)
+        if (!isdigit(i))
             return false;
 
     return true;
 }
 
-bool valid_cost(string s)
+bool valid_cost(const string& s)
 {
 
     ///Not a number
@@ -35,17 +37,17 @@ Card::Card()
     info("None"),
     cost(0),
     attack(0),
-    shield(0),
+    block(0),
     id(++count) {
     // cout << "Card constructor (ID: " << id << ")\n";
 }
 
-Card::Card(string _name, string _info, unsigned int _cost, unsigned int _attack, unsigned int _shield)
-:   name(_name),
-    info(_info),
+Card::Card(string _name, string _info, unsigned int _cost, unsigned int _attack, unsigned int _block)
+:   name(std::move(_name)),
+    info(std::move(_info)),
     cost(_cost),
     attack(_attack),
-    shield(_shield),
+    block(_block),
     id(++count) {
     // cout << "Card constructor (ID: " << id << ")\n";
 }
@@ -66,7 +68,15 @@ Card::Card(vector<std::string> _card): id(++count) {
     /// Catch card number exception
     for (auto it = _card.begin(); it != _card.end(); ++it, ++index)
     {
-
+        try {
+            if ((*it).empty())
+                throw (index + 1);
+        }
+        catch (unsigned int err_null_ind) {
+            cout << "Received a null value while parsing card data (Pos: " << err_null_ind << ").\n";
+            exit(1);
+        }
+        //
         if (index >= 2 && index <= 4)
         {
             try {
@@ -88,7 +98,7 @@ Card::Card(vector<std::string> _card): id(++count) {
         else if (index == 3)
             attack = stoi(*it);
         else if (index == 4)
-            shield = stoi(*it);
+            block = stoi(*it);
     }
 }
 
@@ -98,24 +108,21 @@ Card::Card(const Card& c)
     info(c.info),
     cost(c.cost),
     attack(c.attack),
-    shield(c.shield),
+    block(c.block),
     id(++count) {
     // cout << "Card Copy constructor (ID: " << id << ")\n";
 }
 
-Card::~Card()
-{
-    // cout << "Card Destructor\n";
-}
+Card::~Card() = default;
 
 ///Setters
 
 void Card::set_name(string _name) {
-    name = _name;
+    name = std::move(_name);
 }
 
 void Card::set_info(string _info) {
-    info = _info;
+    info = std::move(_info);
 }
 
 void Card::set_cost(unsigned int _cost) {
@@ -126,8 +133,8 @@ void Card::set_attack(unsigned int _attack) {
     attack = _attack;
 }
 
-void Card::set_shield(unsigned int _shield) {
-    shield = _shield;
+void Card::set_block(unsigned int _block) {
+    block = _block;
 }
 
 ///Getters
@@ -151,8 +158,8 @@ unsigned int Card::get_attack() const {
     return attack;
 }
 
-unsigned int Card::get_shield() const {
-    return shield;
+unsigned int Card::get_block() const {
+    return block;
 }
 
 unsigned int Card::get_id() const
@@ -164,7 +171,7 @@ unsigned int Card::get_id() const
 
 istream& operator>>(istream& is, Card& c)
 {
-    string _cost, _attack, _shield;
+    string _cost, _attack, _block;
     cout << "[Card Data]\n";
     cout << "Name: ";
     getline(cin, c.name);
@@ -184,13 +191,13 @@ istream& operator>>(istream& is, Card& c)
         cout <<"Attack: "; cin>>_attack;
     }
     c.attack = stoi(_attack);
-    cout <<"Shield: "; cin>>_shield;
-    while (!valid_number(_shield))
+    cout <<"Block: "; cin>>_block;
+    while (!valid_number(_block))
     {
         cout << "Expected a positive integer. Try again.\n";
-        cout <<"Shield: "; cin>>_shield;
+        cout <<"Block: "; cin>>_block;
     }
-    c.shield = stoi(_shield);
+    c.block = stoi(_block);
     return is;
 }
 
@@ -211,5 +218,21 @@ Card& Card::operator=(const Card& c)
     name = c.name,
     info = c.info,
     cost = c.cost;
+    attack = c.attack;
+    block = c.block;
     return *this;
+}
+
+bool Card::operator==(const Card &c) {
+    if (name != c.name)
+        return false;
+    if (info != c.info)
+        return false;
+    if (cost != c.cost)
+        return false;
+    if (attack != c.attack)
+        return false;
+    if (block != c.block)
+        return false;
+    return true;
 }

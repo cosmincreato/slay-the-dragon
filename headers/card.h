@@ -9,15 +9,15 @@ class Card {
 private:
     static unsigned int count;
     string name, info;
-    unsigned int cost, attack, shield;
+    unsigned int cost, attack, block;
     const unsigned int id;
 public:
 
     ///Constructors and destructors
 
     Card();
-    Card(string _name, string _info, unsigned int _cost, unsigned int _attack, unsigned int _shield);
-    Card(vector<string> _card);
+    Card(string _name, string _info, unsigned int _cost, unsigned int _attack, unsigned int _block);
+    explicit Card(vector<string> _card);
     Card(const Card& c);
     ~Card();
 
@@ -27,7 +27,7 @@ public:
     void set_info(string _info);
     void set_cost(unsigned int _cost);
     void set_attack(unsigned int _attack);
-    void set_shield(unsigned int _shield);
+    void set_block(unsigned int _block);
 
     ///Getters
 
@@ -36,11 +36,12 @@ public:
     unsigned int get_cost() const;
     unsigned int get_id() const;
     unsigned int get_attack() const;
-    unsigned int get_shield() const;
+    unsigned int get_block() const;
 
     ///Operator overloading
 
     friend istream& operator>>(istream& is, Card& c);
     friend ostream& operator<<(ostream& os, const Card& c);
     Card& operator=(const Card& c);
+    bool operator == (const Card& c);
 };
