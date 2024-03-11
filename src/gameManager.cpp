@@ -120,7 +120,7 @@ void GameManager::start_round() {
     while (true)
     {
         hand_size = player.get_hand().size();
-        cout << "Enter a number between 1 and " << hand_size << " to play a card, or 0 to end your turn.\n";
+        cout << "Enter a number between 1 and " << hand_size << " to play a card. Enter 0 to end your turn.\n";
         cin >> _played_card;
         while (!valid_card(_played_card, hand_size))
         {
@@ -128,9 +128,13 @@ void GameManager::start_round() {
             cin >> _played_card;
         }
         played_card = stoi(_played_card);
+
         /// End turn
         if (played_card == 0)
             break;
+
+        /// Play the selected card
+        cout << '\n';
         card = *(player.get_hand().begin() + played_card - 1);
         if (player.get_energy() < card.get_cost())
         {
@@ -142,6 +146,7 @@ void GameManager::start_round() {
             player.play(card);
             /// Deal damage to the enemy
             enemy.set_hp(enemy.get_hp() - card.get_attack());
+            if (enemy.get_hp() < 0) enemy.set_hp(0);
             ui();
         }
     }
@@ -163,4 +168,17 @@ void GameManager::start() {
     /// Start the round cycle
     while (enemy.get_hp() > 0 && player.get_hp() > 0)
         start_round();
+
+    if (enemy.get_hp() <= 0)
+    {
+        cout << "Congratulations! You slayed the dragon in " << round << " rounds! ";
+    }
+    else
+    {
+        cout << "You lost! Better luck next time! ";
+    }
+    cout << "Enter anything to quit the game.\n";
+    string quit;
+    cin >> quit;
+    exit(0);
 }

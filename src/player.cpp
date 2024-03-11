@@ -30,7 +30,8 @@ Player::Player()
     energy(0),
     block(0),
     deck({}),
-    hand({}) {
+    hand({}),
+    discarded({}) {
     ///Create the Deck using the "deck.txt" file
     string card;
     while (getline(fin, card))
@@ -110,8 +111,7 @@ void Player::play(const Card& card) {
     block += card.get_block();
     energy -= card.get_cost();
 
-    deck.emplace_back(card);
-    shuffle_deck();
+    discarded.emplace_back(card);
 
     for (auto it = hand.begin(); it != hand.end(); ++it)
         if (*it == card)
@@ -124,6 +124,8 @@ void Player::play(const Card& card) {
 void Player::draw(int times) {
     while (times--)
     {
+        if (deck.size() == 0)
+            shuffle_deck();
         Card top_deck = deck.back();
         hand.emplace_back(top_deck);
         deck.pop_back();
@@ -132,13 +134,16 @@ void Player::draw(int times) {
 
 void Player::discard() {
     for (const Card& card : hand)
-        deck.emplace_back(card);
+        discarded.emplace_back(card);
     hand.clear();
-    shuffle_deck();
 }
 
 void Player::shuffle_deck() {
     random_device rd;
     mt19937 g(rd());
+    //
+    for (const Card& card : discarded)
+        deck.emplace_back(card);
+    //
     shuffle(deck.begin(), deck.end(), g);
 }

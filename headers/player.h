@@ -13,7 +13,7 @@ private:
     const unsigned int max_energy = 3;
     unsigned int max_hp, block;
     int hp, energy;
-    Cards deck, hand;
+    Cards deck, hand, discarded;
 public:
 
     ///Constructors and destructors
