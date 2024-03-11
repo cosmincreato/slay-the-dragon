@@ -99,14 +99,16 @@ void GameManager::ui() {
     cout << "[Your Hand]\n";
     for (const Card& card : player.get_hand())
         cout << '(' << hand_index++ << ") " << card;
-    cout << '\n' << enemy << '\n';
+    cout << '\n' << enemy;
+    cout << "The enemy intends to deal " << enemy.get_attack()<< " damage.\n";
 }
 
 void GameManager::start_round() {
     cout << "[Round " << ++round << "]\n";
 
-    /// Refresh the player's energy
+    /// Refresh the player's stats
     player.set_energy(player.get_max_energy());
+    player.set_block(0);
     /// The player draws 5 at the start of the round
     player.draw(5);
     ui();
@@ -145,7 +147,14 @@ void GameManager::start_round() {
     }
 
     /// Enemy action
-
+    // The enemy deals damage (must go through block first)
+    int dmg = enemy.get_attack();
+    if (dmg > player.get_block())
+    {
+        dmg -= player.get_block();
+        player.set_block(0);
+    }
+    player.set_hp(player.get_hp() - dmg);
     /// The player discards at the end of the round
     player.discard();
 }

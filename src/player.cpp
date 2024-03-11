@@ -101,7 +101,7 @@ Cards Player::get_hand() const {
 ostream& operator<<(ostream& os, const Player& player)
 {
     os  << player.name << '\n';
-    os << player.hp << " / " << player.max_hp << " HP\n";
+    os << player.hp << " / " << player.max_hp << " HP (" << player.block <<" Block) \n";
     os << player.energy << " / " << player.max_energy << " Energy\n";
     return os;
 }
