@@ -79,9 +79,7 @@ GameManager::GameManager() {
     init_stats();
 }
 
-GameManager::~GameManager() {
-    // cout<<"Game Destructor\n";
-}
+GameManager::~GameManager() = default;
 
 unsigned int GameManager::get_difficulty() const {
     return difficulty;

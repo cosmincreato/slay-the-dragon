@@ -10,9 +10,7 @@ Enemy::Enemy()
     // cout << "Enemy Constructor\n";
 }
 
-Enemy::~Enemy() {
-    // cout << "Enemy Destructor\n";
-}
+Enemy::~Enemy() = default;
 
 void Enemy::set_attack(int _attack) {
     attack = _attack;

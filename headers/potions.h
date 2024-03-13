@@ -14,7 +14,7 @@ private:
 public:
     Potions();
 
-    int get_count() const;
+    static int get_count() ;
     string get_name(unsigned int potion) const;
     string get_info(unsigned int potion) const;
 

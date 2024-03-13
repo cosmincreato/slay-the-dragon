@@ -15,7 +15,7 @@ void Potions::set_used(unsigned int potion, bool _used) {
     used[potion] = _used;
 }
 
-int Potions::get_count() const {
+int Potions::get_count() {
     return count;
 }
 

@@ -1,5 +1,3 @@
-#include <iostream>
-
 #include "headers/gameManager.h"
 
 using namespace std;
