@@ -15,4 +15,6 @@ add_executable(OOP_Project
         headers/player.h
         src/enemy.cpp
         headers/enemy.h
+        src/potions.cpp
+        headers/potions.h
 )

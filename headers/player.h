@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include "card.h"
+#include "potions.h"
 
 using namespace std;
 
@@ -14,6 +15,7 @@ private:
     unsigned int max_hp, block;
     int hp, energy;
     Cards deck, hand, discarded;
+    Potions potions;
 public:
 
     ///Constructors and destructors
@@ -36,6 +38,7 @@ public:
     int get_block() const;
     Cards get_deck() const;
     Cards get_hand() const;
+    Potions get_potions() const;
 
     ///Operator overloading
 
@@ -47,4 +50,5 @@ public:
     void draw(int times = 1);
     void discard();
     void shuffle_deck();
+    void drink(unsigned int potion);
 };

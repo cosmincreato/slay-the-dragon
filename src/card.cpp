@@ -32,6 +32,14 @@ bool valid_cost(const string& s)
     return true;
 }
 
+void err_exit()
+{
+    cout << "Enter anything to quit the game.\n";
+    string quit;
+    cin >> quit;
+    exit(1);
+}
+
 Card::Card()
 :   name("None"),
     info("None"),
@@ -62,7 +70,7 @@ Card::Card(vector<std::string> _card): id(++count) {
     }
     catch (size_t err_size) {
         cout << "Wrong card format. Expected 5 values, only received " << err_size << ".\n";
-        exit(1);
+        err_exit();
     }
 
     /// Catch card number exception
@@ -74,7 +82,7 @@ Card::Card(vector<std::string> _card): id(++count) {
         }
         catch (unsigned int err_null_ind) {
             cout << "Received a null value while parsing card data (Pos: " << err_null_ind << ").\n";
-            exit(1);
+            err_exit();
         }
         //
         if (index >= 2 && index <= 4)
@@ -85,7 +93,7 @@ Card::Card(vector<std::string> _card): id(++count) {
             }
             catch (string err_int) {
                 cout << "Expected a number while parsing card data. Received a string (" << err_int << ").\n";
-                exit(1);
+                err_exit();
             }
         }
 

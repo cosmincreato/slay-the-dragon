@@ -19,6 +19,8 @@ const unsigned int PLAYER_MAX_HP[3] = {
         25
 };
 
+int dmg;
+
 unsigned int GameManager::round = 0;
 
 bool valid_num(const string& s)
@@ -40,14 +42,14 @@ bool valid_difficulty(const string& diff)
     return (d >= 0 && d <=2);
 }
 
-bool valid_card(const string& card, int max_range)
+bool valid_card(const string& card, int min_range, int max_range)
 {
     ///Not a number
     if (!valid_num(card))
         return false;
 
     int c = stoi(card);
-    return (c >= 0 && c <= max_range);
+    return (c >= min_range && c <= max_range);
 }
 
 void GameManager::init_stats() {
@@ -64,7 +66,7 @@ GameManager::GameManager() {
     cout << "What is your name?\n";
     getline(cin, name);
     player.set_name(name);
-    cout << "Set your difficulty: \n[0=Easy]\n[1=Medium]\n[2=Hard]\n";
+    cout << "\nSet your difficulty: \n[0=Easy]\n[1=Medium]\n[2=Hard]\n";
     cin >> diff;
     while (!valid_difficulty(diff))
     {
@@ -93,38 +95,51 @@ Enemy GameManager::get_enemy() const {
     return enemy;
 }
 
-void GameManager::ui() {
+void GameManager::ui(int taken_damage, int gained_block, int spent_energy) {
+    cout << '\n';
     int hand_index = 1;
-    cout << player << '\n';
+    cout << player;
+    if (taken_damage != 0)
+        cout << "(-" << taken_damage << " HP.)\n";
+    if (gained_block != 0)
+        cout << "(+" << gained_block << " block.)\n";
+    if (spent_energy != 0)
+        cout << "(-" << spent_energy << " energy.)\n";
+    cout << '\n';
     cout << "[Your Hand]\n";
     for (const Card& card : player.get_hand())
         cout << '(' << hand_index++ << ") " << card;
+    cout <<'['<<player.get_deck().size()<<" remaining in deck]\n";
     cout << '\n' << enemy;
     cout << "The enemy intends to deal " << enemy.get_attack()<< " damage.\n";
 }
 
 void GameManager::start_round() {
-    cout << "[Round " << ++round << "]\n";
+    for (int i = 0; i <= 80; ++i)
+        cout<<'-';
+    cout << "\n[Round " << ++round << "]\n";
 
     /// Refresh the player's stats
     player.set_energy(player.get_max_energy());
     player.set_block(0);
     /// The player draws 5 at the start of the round
     player.draw(5);
-    ui();
+    ui(dmg);
 
     ///Card choices during the round
-    int played_card, hand_size;
-    string _played_card;
+    int played_card, hand_size, potion;
+    string _played_card, _potion;
     Card card;
     while (true)
     {
         hand_size = player.get_hand().size();
-        cout << "Enter a number between 1 and " << hand_size << " to play a card. Enter 0 to end your turn.\n";
+        if (hand_size > 0)
+            cout << "Enter a number between 1 and " << hand_size << " to play a card. ";
+        cout << "Enter "<< hand_size+1 << " to drink a potion. Enter 0 to end your turn.\n";
         cin >> _played_card;
-        while (!valid_card(_played_card, hand_size))
+        while (!valid_card(_played_card, 0, hand_size+1))
         {
-            cout << "Expected a number between 0 and "<< hand_size << ". Try again.\n";
+            cout << "Expected a number between 0 and "<< hand_size+1 << ". Try again.\n";
             cin >> _played_card;
         }
         played_card = stoi(_played_card);
@@ -133,27 +148,48 @@ void GameManager::start_round() {
         if (played_card == 0)
             break;
 
-        /// Play the selected card
-        cout << '\n';
-        card = *(player.get_hand().begin() + played_card - 1);
-        if (player.get_energy() < card.get_cost())
+        ///Drink potion
+        if (played_card == hand_size + 1)
         {
-            cout << "You don't have enough energy to play this card.\n";
+            cout << "\nEnter a number between 1 and " << player.get_potions().get_count() << " to drink a potion.\n";
+            for (int potion_index = 0; potion_index < player.get_potions().get_count(); ++potion_index) {
+                cout << '(' << potion_index + 1 << ") " << player.get_potions().get_name(potion_index);
+                cout << " [" << player.get_potions().get_info(potion_index) << "]\n";
+            }
+            cin >> _potion;
+            while (!valid_card(_potion, 1, player.get_potions().get_count()))
+            {
+                cout << "Expected a number between 1 and "<< player.get_potions().get_count() << ". Try again.\n";
+                cin >> _potion;
+            }
+            potion = stoi(_potion) - 1;
+            player.drink(potion);
             ui();
         }
+
+        /// Play the selected card
         else
         {
-            player.play(card);
-            /// Deal damage to the enemy
-            enemy.set_hp(enemy.get_hp() - card.get_attack());
-            if (enemy.get_hp() < 0) enemy.set_hp(0);
-            ui();
+            card = *(player.get_hand().begin() + played_card - 1);
+            if (player.get_energy() < card.get_cost())
+            {
+                cout << "You don't have enough energy to play this card.\n";
+                ui();
+            }
+            else {
+                player.play(card);
+                /// Deal damage to the enemy
+                enemy.set_hp(enemy.get_hp() - card.get_attack());
+                if (enemy.get_hp() < 0)
+                    enemy.set_hp(0);
+                ui(0,card.get_block(),card.get_cost());
+            }
         }
     }
 
     /// Enemy action
     // The enemy deals damage (must go through block first)
-    int dmg = enemy.get_attack();
+    dmg = enemy.get_attack();
     if (dmg > player.get_block())
     {
         dmg -= player.get_block();

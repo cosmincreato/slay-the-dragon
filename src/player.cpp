@@ -99,11 +99,25 @@ Cards Player::get_hand() const {
     return hand;
 }
 
+Potions Player::get_potions() const {
+    return potions;
+}
+
 ostream& operator<<(ostream& os, const Player& player)
 {
     os  << player.name << '\n';
     os << player.hp << " / " << player.max_hp << " HP (" << player.block <<" Block) \n";
     os << player.energy << " / " << player.max_energy << " Energy\n";
+    os << "Potions: ";
+    for (int potion_index = 0; potion_index < player.potions.get_count(); ++potion_index)
+    {
+        bool used = player.potions.get_used(potion_index);
+        if (used)
+            os << "[ ] ";
+        else
+            os << "[x] ";
+    }
+    cout <<'\n';
     return os;
 }
 
@@ -124,11 +138,15 @@ void Player::play(const Card& card) {
 void Player::draw(int times) {
     while (times--)
     {
-        if (deck.size() == 0)
-            shuffle_deck();
         Card top_deck = deck.back();
         hand.emplace_back(top_deck);
         deck.pop_back();
+
+        if (deck.size() == 0)
+        {
+            shuffle_deck();
+            discarded.clear();
+        }
     }
 }
 
@@ -146,4 +164,27 @@ void Player::shuffle_deck() {
         deck.emplace_back(card);
     //
     shuffle(deck.begin(), deck.end(), g);
+}
+
+void Player::drink(unsigned int potion) {
+    if (potions.get_used(potion) == false)
+    {
+        potions.set_used(potion, true);
+        if (potion == 0) /// Blood Potion (Heal)
+        {
+            hp += max_hp * 0.1;
+            if (hp > max_hp)
+                hp = max_hp;
+
+        } else if (potion == 1) /// Energy Potions (Refresh)
+        {
+            energy = max_energy;
+        } else {
+            draw(3);
+        }
+
+    } else
+    {
+        cout<<"Potion already used.\n";
+    }
 }
