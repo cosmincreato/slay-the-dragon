@@ -1,9 +1,8 @@
-#include "headers/gameManager.h"
+#include <memory>
+#include "headers/gameManager.hpp"
+#include "headers/enemies/dragon.hpp"
 
-using namespace std;
-
-int main()
-{
+int main() {
     GameManager game;
     game.start();
     return 0;

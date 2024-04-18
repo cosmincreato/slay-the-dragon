@@ -1,10 +1,7 @@
-#include "../headers/potions.h"
-
-using namespace std;
+#include "../headers/potions.hpp"
 
 Potions::Potions()
-    :used{false, false, false}
-    {}
+        : used{false, false, false} {}
 
 
 bool Potions::get_used(unsigned int potion) const {
@@ -19,10 +16,10 @@ int Potions::get_count() {
     return count;
 }
 
-string Potions::get_name(unsigned int potion) const {
+std::string Potions::get_name(unsigned int potion) const {
     return name[potion];
 }
 
-string Potions::get_info(unsigned int potion) const {
+std::string Potions::get_info(unsigned int potion) const {
     return info[potion];
 }

@@ -1,24 +1,20 @@
 #include <iostream>
 #include <utility>
-#include "../headers/card.h"
-
-using namespace std;
+#include "../headers/card.hpp"
 
 const unsigned int MIN_COST = 0, MAX_COST = 3;
 
 unsigned int Card::count = 0;
 
-bool valid_number(const string& s)
-{
-    for (char i : s)
+bool valid_number(const std::string &s) {
+    for (char i: s)
         if (!isdigit(i))
             return false;
 
     return true;
 }
 
-bool valid_cost(const string& s)
-{
+bool valid_cost(const std::string &s) {
 
     ///Not a number
     if (!valid_number(s))
@@ -32,67 +28,63 @@ bool valid_cost(const string& s)
     return true;
 }
 
-void err_exit()
-{
-    cout << "Enter anything to quit the game.\n";
-    string quit;
-    cin >> quit;
+void err_exit() {
+    std::cout << "Enter anything to quit the game.\n";
+    std::string quit;
+    std::cin >> quit;
     exit(1);
 }
 
 Card::Card()
-:   name("None"),
-    info("None"),
-    cost(0),
-    attack(0),
-    block(0),
-    id(++count) {
+        : name("None"),
+          info("None"),
+          cost(0),
+          attack(0),
+          block(0),
+          id(++count) {
     // cout << "Card constructor (ID: " << id << ")\n";
 }
 
-Card::Card(string _name, string _info, unsigned int _cost, unsigned int _attack, unsigned int _block)
-:   name(std::move(_name)),
-    info(std::move(_info)),
-    cost(_cost),
-    attack(_attack),
-    block(_block),
-    id(++count) {
+Card::Card(std::string _name, std::string _info, unsigned int _cost, unsigned int _attack, unsigned int _block)
+        : name(std::move(_name)),
+          info(std::move(_info)),
+          cost(_cost),
+          attack(_attack),
+          block(_block),
+          id(++count) {
     // cout << "Card constructor (ID: " << id << ")\n";
 }
 
-Card::Card(vector<std::string> _card): id(++count) {
+Card::Card(std::vector<std::string> _card) : id(++count) {
     unsigned int index = 0;
     /// Catch card format exception
-    try
-    {
+    try {
         if (_card.size() != 5)
             throw (_card.size());
     }
     catch (size_t err_size) {
-        cout << "Wrong card format. Expected 5 values, only received " << err_size << ".\n";
+        std::cout << "Wrong card format. Expected 5 values, only received " << err_size << ".\n";
         err_exit();
     }
 
     /// Catch card number exception
-    for (auto it = _card.begin(); it != _card.end(); ++it, ++index)
-    {
+    for (auto it = _card.begin(); it != _card.end(); ++it, ++index) {
         try {
             if ((*it).empty())
                 throw (index + 1);
         }
         catch (unsigned int err_null_ind) {
-            cout << "Received a null value while parsing card data (Pos: " << err_null_ind << ").\n";
+            std::cout << "Received a null value while parsing card data (Pos: " << err_null_ind << ").\n";
             err_exit();
         }
         //
-        if (index >= 2 && index <= 4)
-        {
+        if (index >= 2 && index <= 4) {
             try {
                 if (!valid_number(*it))
                     throw (*it);
             }
-            catch (string err_int) {
-                cout << "Expected a number while parsing card data. Received a string (" << err_int << ").\n";
+            catch (std::string err_int) {
+                std::cout << "Expected a number while parsing card data. Received a string (" << err_int << ").\n";
                 err_exit();
             }
         }
@@ -111,13 +103,13 @@ Card::Card(vector<std::string> _card): id(++count) {
 }
 
 
-Card::Card(const Card& c)
-:   name(c.name),
-    info(c.info),
-    cost(c.cost),
-    attack(c.attack),
-    block(c.block),
-    id(++count) {
+Card::Card(const Card &c)
+        : name(c.name),
+          info(c.info),
+          cost(c.cost),
+          attack(c.attack),
+          block(c.block),
+          id(++count) {
     // cout << "Card Copy constructor (ID: " << id << ")\n";
 }
 
@@ -125,11 +117,11 @@ Card::~Card() = default;
 
 ///Setters
 
-void Card::set_name(string _name) {
+void Card::set_name(std::string _name) {
     name = std::move(_name);
 }
 
-void Card::set_info(string _info) {
+void Card::set_info(std::string _info) {
     info = std::move(_info);
 }
 
@@ -147,18 +139,15 @@ void Card::set_block(unsigned int _block) {
 
 ///Getters
 
-string Card::get_name() const
-{
+std::string Card::get_name() const {
     return name;
 }
 
-string Card::get_info() const
-{
+std::string Card::get_info() const {
     return info;
 }
 
-unsigned int Card::get_cost() const
-{
+unsigned int Card::get_cost() const {
     return cost;
 }
 
@@ -170,47 +159,47 @@ unsigned int Card::get_block() const {
     return block;
 }
 
-unsigned int Card::get_id() const
-{
+unsigned int Card::get_id() const {
     return id;
 }
 
 ///Operator overloading
 
-istream& operator>>(istream& is, Card& c)
-{
-    string _cost, _attack, _block;
-    cout << "[Card Data]\n";
-    cout << "Name: ";
-    getline(cin, c.name);
-    cout << "Info: ";
-    getline(cin, c.info);
-    cout << "Cost: "; cin >> _cost;
-    while (!valid_cost(_cost))
-    {
-        cout << "Expected a number between " << MIN_COST << " and " << MAX_COST << ". Try again.\n";
-        cout << "Cost: "; cin >> _cost;
+std::istream &operator>>(std::istream &is, Card &c) {
+    std::string _cost, _attack, _block;
+    std::cout << "[Card Data]\n";
+    std::cout << "Name: ";
+    getline(std::cin, c.name);
+    std::cout << "Info: ";
+    getline(std::cin, c.info);
+    std::cout << "Cost: ";
+    std::cin >> _cost;
+    while (!valid_cost(_cost)) {
+        std::cout << "Expected a number between " << MIN_COST << " and " << MAX_COST << ". Try again.\n";
+        std::cout << "Cost: ";
+        std::cin >> _cost;
     }
     c.cost = stoi(_cost);
-    cout <<"Attack: "; cin>>_attack;
-    while (!valid_number(_attack))
-    {
-        cout << "Expected a positive integer. Try again.\n";
-        cout <<"Attack: "; cin>>_attack;
+    std::cout << "Attack: ";
+    std::cin >> _attack;
+    while (!valid_number(_attack)) {
+        std::cout << "Expected a positive integer. Try again.\n";
+        std::cout << "Attack: ";
+        std::cin >> _attack;
     }
     c.attack = stoi(_attack);
-    cout <<"Block: "; cin>>_block;
-    while (!valid_number(_block))
-    {
-        cout << "Expected a positive integer. Try again.\n";
-        cout <<"Block: "; cin>>_block;
+    std::cout << "Block: ";
+    std::cin >> _block;
+    while (!valid_number(_block)) {
+        std::cout << "Expected a positive integer. Try again.\n";
+        std::cout << "Block: ";
+        std::cin >> _block;
     }
     c.block = stoi(_block);
     return is;
 }
 
-ostream& operator<<(ostream& os, const Card& c)
-{
+std::ostream &operator<<(std::ostream &os, const Card &c) {
     os << '[';
     os << '"' << c.name << '"';
     os << " | ";
@@ -221,8 +210,7 @@ ostream& operator<<(ostream& os, const Card& c)
     return os;
 }
 
-Card& Card::operator=(const Card& c)
-{
+Card &Card::operator=(const Card &c) {
     name = c.name,
     info = c.info,
     cost = c.cost;

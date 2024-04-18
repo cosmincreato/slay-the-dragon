@@ -1,49 +1,31 @@
 #include <iostream>
-#include "../headers/gameManager.h"
-
-using namespace std;
-
-const unsigned int PLAYER_MAX_HP[3] = {
-        300,
-        200,
-        100
-},
-    ENEMY_MAX_HP[3] = {
-        100,
-        150,
-        200
-},
-    ENEMY_ATTACK[3] = {
-        15,
-        20,
-        25
-};
+#include "../headers/gameManager.hpp"
+#include "../headers/enemies/dragon.hpp"
+#include "../headers/enemies/skeleton.hpp"
+#include "../headers/enemies/darkElf.hpp"
 
 int dmg;
 
 unsigned int GameManager::round = 0;
 
-bool valid_num(const string& s)
-{
-    for (char i : s)
+bool valid_num(const std::string &s) {
+    for (char i: s)
         if (!isdigit(i))
             return false;
 
     return true;
 }
 
-bool valid_difficulty(const string& diff)
-{
+bool valid_difficulty(const std::string &diff) {
     ///Not a number
     if (!valid_num(diff))
         return false;
 
     int d = stoi(diff);
-    return (d >= 0 && d <=2);
+    return (d >= 0 && d <= 2);
 }
 
-bool valid_card(const string& card, int min_range, int max_range)
-{
+bool valid_card(const std::string &card, int min_range, int max_range) {
     ///Not a number
     if (!valid_num(card))
         return false;
@@ -53,25 +35,37 @@ bool valid_card(const string& card, int min_range, int max_range)
 }
 
 void GameManager::init_stats() {
-    player.set_max_hp(PLAYER_MAX_HP[difficulty]);
+    if (difficulty == 0) {
+        enemy = std::make_unique<Skeleton>();
+        std::unique_ptr<Skeleton> deriv(dynamic_cast<Skeleton*>(enemy.release()));
+        enemy = std::move(deriv);
+    } else if (difficulty == 1) {
+        enemy = std::make_unique<DarkElf>();
+        std::unique_ptr<DarkElf> deriv(dynamic_cast<DarkElf*>(enemy.release()));
+        enemy = std::move(deriv);
+    }
+    else {
+        enemy = std::make_unique<Dragon>();
+        std::unique_ptr<Dragon> deriv(dynamic_cast<Dragon*>(enemy.release()));
+        enemy = std::move(deriv);
+    }
+    //
+    player.set_max_hp(200);
     player.set_hp(player.get_max_hp());
-    enemy.set_max_hp(ENEMY_MAX_HP[difficulty]);
-    enemy.set_hp(enemy.get_max_hp());
-    enemy.set_attack(ENEMY_ATTACK[difficulty]);
 }
 
 GameManager::GameManager() {
-    // cout << "Game Constructor\n";
-    string diff, name;
-    cout << "What is your name?\n";
-    getline(cin, name);
+    /// cout << "Game Constructor\n";
+
+    std::string diff, name;
+    std::cout << "What is your name?\n";
+    getline(std::cin, name);
     player.set_name(name);
-    cout << "\nSet your difficulty: \n[0=Easy]\n[1=Medium]\n[2=Hard]\n";
-    cin >> diff;
-    while (!valid_difficulty(diff))
-    {
-        cout << "Expected a number between 0 and 2. Try again.\n";
-        cin >> diff;
+    std::cout << "\nSet your difficulty: \n[0=Easy]\n[1=Medium]\n[2=Hard]\n";
+    std::cin >> diff;
+    while (!valid_difficulty(diff)) {
+        std::cout << "Expected a number between 0 and 2. Try again.\n";
+        std::cin >> diff;
     }
     int d = stoi(diff);
     difficulty = d;
@@ -81,41 +75,30 @@ GameManager::GameManager() {
 
 GameManager::~GameManager() = default;
 
-unsigned int GameManager::get_difficulty() const {
-    return difficulty;
-}
-
-Player GameManager::get_player() const {
-    return player;
-}
-
-Enemy GameManager::get_enemy() const {
-    return enemy;
-}
 
 void GameManager::ui(int taken_damage, int gained_block, int spent_energy) {
-    cout << '\n';
+    std::cout << '\n';
     int hand_index = 1;
-    cout << player;
+    std::cout << player;
     if (taken_damage != 0)
-        cout << "(-" << taken_damage << " HP.)\n";
+        std::cout << "(-" << taken_damage << " HP.)\n";
     if (gained_block != 0)
-        cout << "(+" << gained_block << " block.)\n";
+        std::cout << "(+" << gained_block << " block.)\n";
     if (spent_energy != 0)
-        cout << "(-" << spent_energy << " energy.)\n";
-    cout << '\n';
-    cout << "[Your Hand]\n";
-    for (const Card& card : player.get_hand())
-        cout << '(' << hand_index++ << ") " << card;
-    cout <<'['<<player.get_deck().size()<<" remaining in deck]\n";
-    cout << '\n' << enemy;
-    cout << "The enemy intends to deal " << enemy.get_attack()<< " damage.\n";
+        std::cout << "(-" << spent_energy << " energy.)\n";
+    std::cout << '\n';
+    std::cout << "[Your Hand]\n";
+    for (const Card &card: player.get_hand())
+        std::cout << '(' << hand_index++ << ") " << card;
+    std::cout << '[' << player.get_deck().size() << " remaining in deck]\n";
+    std::cout << enemy << '\n';
+    std::cout << "The enemy intends to deal " << enemy->get_attack() << " damage.\n";
 }
 
 void GameManager::start_round() {
     for (int i = 0; i <= 80; ++i)
-        cout<<'-';
-    cout << "\n[Round " << ++round << "]\n";
+        std::cout << '-';
+    std::cout << "\n[Round " << ++round << "]\n";
 
     /// Refresh the player's stats
     player.set_energy(player.get_max_energy());
@@ -126,19 +109,17 @@ void GameManager::start_round() {
 
     ///Card choices during the round
     int played_card, hand_size, potion;
-    string _played_card, _potion;
+    std::string _played_card, _potion;
     Card card;
-    while (true)
-    {
+    while (true) {
         hand_size = player.get_hand().size();
         if (hand_size > 0)
-            cout << "Enter a number between 1 and " << hand_size << " to play a card. ";
-        cout << "Enter "<< hand_size+1 << " to drink a potion. Enter 0 to end your turn.\n";
-        cin >> _played_card;
-        while (!valid_card(_played_card, 0, hand_size+1))
-        {
-            cout << "Expected a number between 0 and "<< hand_size+1 << ". Try again.\n";
-            cin >> _played_card;
+            std::cout << "Enter a number between 1 and " << hand_size << " to play a card. ";
+        std::cout << "Enter " << hand_size + 1 << " to drink a potion. Enter 0 to end your turn.\n";
+        std::cin >> _played_card;
+        while (!valid_card(_played_card, 0, hand_size + 1)) {
+            std::cout << "Expected a number between 0 and " << hand_size + 1 << ". Try again.\n";
+            std::cin >> _played_card;
         }
         played_card = stoi(_played_card);
 
@@ -147,49 +128,44 @@ void GameManager::start_round() {
             break;
 
         ///Drink potion
-        if (played_card == hand_size + 1)
-        {
-            cout << "\nEnter a number between 1 and " << player.get_potions().get_count() << " to drink a potion.\n";
+        if (played_card == hand_size + 1) {
+            std::cout << "\nEnter a number between 1 and " << player.get_potions().get_count()
+                      << " to drink a potion.\n";
             for (int potion_index = 0; potion_index < player.get_potions().get_count(); ++potion_index) {
-                cout << '(' << potion_index + 1 << ") " << player.get_potions().get_name(potion_index);
-                cout << " [" << player.get_potions().get_info(potion_index) << "]\n";
+                std::cout << '(' << potion_index + 1 << ") " << player.get_potions().get_name(potion_index);
+                std::cout << " [" << player.get_potions().get_info(potion_index) << "]\n";
             }
-            cin >> _potion;
-            while (!valid_card(_potion, 1, player.get_potions().get_count()))
-            {
-                cout << "Expected a number between 1 and "<< player.get_potions().get_count() << ". Try again.\n";
-                cin >> _potion;
+            std::cin >> _potion;
+            while (!valid_card(_potion, 1, player.get_potions().get_count())) {
+                std::cout << "Expected a number between 1 and " << player.get_potions().get_count() << ". Try again.\n";
+                std::cin >> _potion;
             }
             potion = stoi(_potion) - 1;
             player.drink(potion);
             ui();
         }
 
-        /// Play the selected card
-        else
-        {
+            /// Play the selected card
+        else {
             card = *(player.get_hand().begin() + played_card - 1);
-            if (player.get_energy() < card.get_cost())
-            {
-                cout << "You don't have enough energy to play this card.\n";
+            if (player.get_energy() < card.get_cost()) {
+                std::cout << "You don't have enough energy to play this card.\n";
                 ui();
-            }
-            else {
+            } else {
                 player.play(card);
                 /// Deal damage to the enemy
-                enemy.set_hp(enemy.get_hp() - card.get_attack());
-                if (enemy.get_hp() < 0)
-                    enemy.set_hp(0);
-                ui(0,card.get_block(),card.get_cost());
+                enemy->set_hp(enemy->get_hp() - card.get_attack());
+                if (enemy->get_hp() < 0)
+                    enemy->set_hp(0);
+                ui(0, card.get_block(), card.get_cost());
             }
         }
     }
 
     /// Enemy action
     // The enemy deals damage (must go through block first)
-    dmg = enemy.get_attack();
-    if (dmg > player.get_block())
-    {
+    dmg = enemy->get_attack();
+    if (dmg > player.get_block()) {
         dmg -= player.get_block();
         player.set_block(0);
     }
@@ -200,19 +176,16 @@ void GameManager::start_round() {
 
 void GameManager::start() {
     /// Start the round cycle
-    while (enemy.get_hp() > 0 && player.get_hp() > 0)
+    while (enemy->get_hp() > 0 && player.get_hp() > 0)
         start_round();
 
-    if (enemy.get_hp() <= 0)
-    {
-        cout << "Congratulations! You slayed the dragon in " << round << " rounds! ";
+    if (enemy->get_hp() <= 0) {
+        std::cout << "Congratulations! You slayed the dragon in " << round << " rounds! ";
+    } else {
+        std::cout << "You lost! Better luck next time! ";
     }
-    else
-    {
-        cout << "You lost! Better luck next time! ";
-    }
-    cout << "Enter anything to quit the game.\n";
-    string quit;
-    cin >> quit;
+    std::cout << "Enter anything to quit the game.\n";
+    std::string quit;
+    std::cin >> quit;
     exit(0);
 }
