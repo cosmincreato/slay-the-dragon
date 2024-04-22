@@ -14,6 +14,8 @@ private:
     int hp, energy;
     Cards deck, hand, discarded;
     Potions potions;
+
+    void recycle_deck();
 public:
 
     ///Constructors and destructors
@@ -57,13 +59,17 @@ public:
 
 
     ///
-    void play(const Card &card);
+    void play(const Card& card);
 
     void draw(int times = 1);
 
     void discard();
 
+    void discard(const Card& card);
+
     void shuffle_deck();
+
+    void exhaust(int times = 1);
 
     void drink(unsigned int potion);
 };

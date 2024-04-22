@@ -8,5 +8,5 @@ public:
 
     ~DarkElf();
 
-    void Effect() override;
+    void effect(Player &player) override;
 };

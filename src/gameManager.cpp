@@ -4,8 +4,6 @@
 #include "../headers/enemies/skeleton.hpp"
 #include "../headers/enemies/darkElf.hpp"
 
-int dmg;
-
 unsigned int GameManager::round = 0;
 
 bool valid_num(const std::string &s) {
@@ -35,6 +33,7 @@ bool valid_card(const std::string &card, int min_range, int max_range) {
 }
 
 void GameManager::init_stats() {
+    /// Pointer type conversion
     if (difficulty == 0) {
         enemy = std::make_unique<Skeleton>();
         std::unique_ptr<Skeleton> deriv(dynamic_cast<Skeleton*>(enemy.release()));
@@ -76,7 +75,7 @@ GameManager::GameManager() {
 GameManager::~GameManager() = default;
 
 
-void GameManager::ui(int taken_damage, int gained_block, int spent_energy) {
+void GameManager::ui(int action_index, int taken_damage, int gained_block, int spent_energy) {
     std::cout << '\n';
     int hand_index = 1;
     std::cout << player;
@@ -92,10 +91,15 @@ void GameManager::ui(int taken_damage, int gained_block, int spent_energy) {
         std::cout << '(' << hand_index++ << ") " << card;
     std::cout << '[' << player.get_deck().size() << " remaining in deck]\n";
     std::cout << enemy << '\n';
-    std::cout << "The enemy intends to deal " << enemy->get_attack() << " damage.\n";
+    if (action_index == 1)
+        std::cout << "The " << enemy->get_name() <<" intends to deal " << enemy->get_attack() << " damage.\n";
+    else
+        std::cout << enemy->get_effect_info() << '\n';
+
 }
 
 void GameManager::start_round() {
+    unsigned int action_index = round % 2;
     for (int i = 0; i <= 80; ++i)
         std::cout << '-';
     std::cout << "\n[Round " << ++round << "]\n";
@@ -103,9 +107,9 @@ void GameManager::start_round() {
     /// Refresh the player's stats
     player.set_energy(player.get_max_energy());
     player.set_block(0);
-    /// The player draws 5 at the start of the round
+    /// The player draws 5 at the start of the round (or all his cards)
     player.draw(5);
-    ui(dmg);
+    ui(action_index);
 
     ///Card choices during the round
     int played_card, hand_size, potion;
@@ -142,7 +146,7 @@ void GameManager::start_round() {
             }
             potion = stoi(_potion) - 1;
             player.drink(potion);
-            ui();
+            ui(action_index);
         }
 
             /// Play the selected card
@@ -150,26 +154,24 @@ void GameManager::start_round() {
             card = *(player.get_hand().begin() + played_card - 1);
             if (player.get_energy() < card.get_cost()) {
                 std::cout << "You don't have enough energy to play this card.\n";
-                ui();
+                ui(action_index);
             } else {
                 player.play(card);
                 /// Deal damage to the enemy
                 enemy->set_hp(enemy->get_hp() - card.get_attack());
                 if (enemy->get_hp() < 0)
                     enemy->set_hp(0);
-                ui(0, card.get_block(), card.get_cost());
+                ui(action_index,0, card.get_block(), card.get_cost());
             }
         }
     }
 
     /// Enemy action
-    // The enemy deals damage (must go through block first)
-    dmg = enemy->get_attack();
-    if (dmg > player.get_block()) {
-        dmg -= player.get_block();
-        player.set_block(0);
+    if (action_index == 1) {
+        enemy->deal_damage(player, enemy->get_attack());
+    } else {
+        enemy->effect(player);
     }
-    player.set_hp(player.get_hp() - dmg);
     /// The player discards at the end of the round
     player.discard();
 }

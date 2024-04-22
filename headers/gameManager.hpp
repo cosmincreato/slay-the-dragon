@@ -16,7 +16,7 @@ private:
 
     void init_stats();
 
-    void ui(int taken_damage = 0, int gained_block = 0, int spent_energy = 0);
+    void ui(int action_index, int taken_damage = 0, int gained_block = 0, int spent_energy = 0);
 
 public:
     /// Constructors and destructors

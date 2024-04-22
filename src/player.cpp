@@ -21,6 +21,13 @@ std::vector<std::string> split_card(const std::string &s, char delim) {
     return result;
 }
 
+void Player::recycle_deck() {
+    if (deck.empty() && !discarded.empty()) {
+        shuffle_deck();
+        discarded.clear();
+    }
+}
+
 Player::Player()
         : name("Hero"),
           hp(0),
@@ -131,13 +138,15 @@ void Player::play(const Card &card) {
 
 void Player::draw(int times) {
     while (times--) {
-        Card top_deck = deck.back();
-        hand.emplace_back(top_deck);
-        deck.pop_back();
-
-        if (deck.size() == 0) {
-            shuffle_deck();
-            discarded.clear();
+        if (!deck.empty()) {
+            Card top_deck = deck.back();
+            hand.emplace_back(top_deck);
+            deck.pop_back();
+        } else if (!discarded.empty()) {
+            recycle_deck();
+            Card top_deck = deck.back();
+            hand.emplace_back(top_deck);
+            deck.pop_back();
         }
     }
 }
@@ -146,6 +155,16 @@ void Player::discard() {
     for (const Card &card: hand)
         discarded.emplace_back(card);
     hand.clear();
+}
+
+void Player::discard(const Card &card) {
+    discarded.emplace_back(card);
+
+    for (auto it = hand.begin(); it != hand.end(); ++it)
+        if (*it == card) {
+            hand.erase(it);
+            break;
+        }
 }
 
 void Player::shuffle_deck() {
@@ -158,8 +177,20 @@ void Player::shuffle_deck() {
     shuffle(deck.begin(), deck.end(), g);
 }
 
+void Player::exhaust(int times) {
+    while (times--) {
+        if (!deck.empty()) {
+            deck.pop_back();
+        }
+        else if (!discarded.empty()) {
+            recycle_deck();
+            deck.pop_back();
+        }
+    }
+}
+
 void Player::drink(unsigned int potion) {
-    if (potions.get_used(potion) == false) {
+    if (!potions.get_used(potion)) {
         potions.set_used(potion, true);
         if (potion == 0) /// Blood Potion (Heal)
         {

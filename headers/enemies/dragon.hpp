@@ -8,5 +8,5 @@ public:
 
     ~Dragon();
 
-    void Effect() override;
+    void effect(Player &player) override;
 };

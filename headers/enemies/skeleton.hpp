@@ -8,5 +8,5 @@ public:
 
     ~Skeleton();
 
-    void Effect() override;
+    void effect(Player &player) override;
 };
