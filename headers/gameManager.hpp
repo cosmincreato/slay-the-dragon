@@ -25,4 +25,6 @@ public:
     ~GameManager();
 
     void start();
+
+    static void gameOver(bool state);
 };

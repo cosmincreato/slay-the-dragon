@@ -49,7 +49,7 @@ void GameManager::init_stats() {
         enemy = std::move(deriv);
     }
     //
-    player.set_max_hp(200);
+    player.set_max_hp(100);
     player.set_hp(player.get_max_hp());
 }
 
@@ -182,7 +182,15 @@ void GameManager::start() {
         start_round();
 
     if (enemy->get_hp() <= 0) {
-        std::cout << "Congratulations! You slayed the dragon in " << round << " rounds! ";
+        gameOver(1);
+    } else {
+        gameOver(0);
+    }
+}
+
+void GameManager::gameOver(bool state) {
+    if (state) {
+        std::cout << "Congratulations! You slayed the enemy in " << round << " rounds! ";
     } else {
         std::cout << "You lost! Better luck next time! ";
     }
