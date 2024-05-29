@@ -1,10 +1,14 @@
 #include <iostream>
 #include "../headers/gameManager.hpp"
-#include "../headers/enemies/dragon.hpp"
+#include "../headers/enemies/enemyFactory.hpp"
 #include "../headers/enemies/skeleton.hpp"
+#include "../headers/enemies/dragon.hpp"
 #include "../headers/enemies/darkElf.hpp"
+#include "../headers/details.hpp"
 
 unsigned int GameManager::round = 0;
+
+GameManager GameManager::instance;
 
 bool valid_num(const std::string &s) {
     for (char i: s)
@@ -34,19 +38,17 @@ bool valid_card(const std::string &card, int min_range, int max_range) {
 
 void GameManager::init_stats() {
     /// Pointer type conversion
+    EnemyFactory f;
     if (difficulty == 0) {
-        enemy = std::make_unique<Skeleton>();
-        std::unique_ptr<Skeleton> deriv(dynamic_cast<Skeleton*>(enemy.release()));
-        enemy = std::move(deriv);
+        std::shared_ptr<Enemy> deriv = f.create(EnemyFactory::SKELETON);
+        enemy = std::dynamic_pointer_cast<Enemy>(deriv);
     } else if (difficulty == 1) {
-        enemy = std::make_unique<DarkElf>();
-        std::unique_ptr<DarkElf> deriv(dynamic_cast<DarkElf*>(enemy.release()));
-        enemy = std::move(deriv);
+        std::shared_ptr<Enemy> deriv = f.create(EnemyFactory::DARK_ELF);
+        enemy = std::dynamic_pointer_cast<Enemy>(deriv);
     }
     else {
-        enemy = std::make_unique<Dragon>();
-        std::unique_ptr<Dragon> deriv(dynamic_cast<Dragon*>(enemy.release()));
-        enemy = std::move(deriv);
+        std::shared_ptr<Enemy> deriv = f.create(EnemyFactory::DRAGON);
+        enemy = std::dynamic_pointer_cast<Enemy>(deriv);
     }
     //
     player.set_max_hp(100);
@@ -74,6 +76,9 @@ GameManager::GameManager() {
 
 GameManager::~GameManager() = default;
 
+GameManager &GameManager::get() {
+    return instance;
+}
 
 void GameManager::ui(int action_index, int taken_damage, int gained_block, int spent_energy) {
     std::cout << '\n';
@@ -90,19 +95,22 @@ void GameManager::ui(int action_index, int taken_damage, int gained_block, int s
     for (const Card &card: player.get_hand())
         std::cout << '(' << hand_index++ << ") " << card;
     std::cout << '[' << player.get_deck().size() << " remaining in deck]\n";
-    std::cout << enemy << '\n';
-    if (action_index == 1)
+    std::cout << (*enemy) << '\n';
+    if (action_index == 0)
         std::cout << "The " << enemy->get_name() <<" intends to deal " << enemy->get_attack() << " damage.\n";
-    else
+    else if (action_index == 1)
         std::cout << enemy->get_effect_info() << '\n';
+    else
+        std::cout << "Mega Attack! The " << enemy->get_name() <<" intends to deal " << enemy->get_attack() * 3 << " damage.\n";
 
 }
 
 void GameManager::start_round() {
-    unsigned int action_index = round % 2;
+
     for (int i = 0; i <= 80; ++i)
         std::cout << '-';
     std::cout << "\n[Round " << ++round << "]\n";
+    unsigned int action_index = (round - 1) % 3;
 
     /// Refresh the player's stats
     player.set_energy(player.get_max_energy());
@@ -167,11 +175,18 @@ void GameManager::start_round() {
     }
 
     /// Enemy action
-    if (action_index == 1) {
-        enemy->deal_damage(player, enemy->get_attack());
-    } else {
-        enemy->effect(player);
+    // Normal attack
+    if (action_index == 0)
+            enemy->deal_damage(player, enemy->get_attack());
+    // Effect
+    else if (action_index == 1)
+            enemy->effect(player);
+    // Mega attack
+    else {
+        std::vector<float> v = {enemy->get_attack(), enemy->get_attack(), enemy->get_attack()};
+        enemy->deal_damage(player, v);
     }
+
     /// The player discards at the end of the round
     player.discard();
 }
@@ -190,10 +205,25 @@ void GameManager::start() {
 
 void GameManager::gameOver(bool state) {
     if (state) {
-        std::cout << "Congratulations! You slayed the enemy in " << round << " rounds! ";
+        std::cout << "Congratulations! You slayed the enemy in " << round << " rounds!\n";
     } else {
-        std::cout << "You lost! Better luck next time! ";
+        std::cout << "You lost! Better luck next time!\n";
     }
+    //
+    std::cout << "Enter 0 to show the final details about the player, or 1 to show the final details about the enemy.\n";
+    bool op;
+    std::cin >> op;
+    if (op==0)
+    {
+        Details<Player> p;
+        p.set_entity(player);
+        p.display();
+    } else {
+        Details<Enemy*> e;
+        e.set_entity(enemy.get());
+        e.display_ptr();
+    }
+    //
     std::cout << "Enter anything to quit the game.\n";
     std::string quit;
     std::cin >> quit;

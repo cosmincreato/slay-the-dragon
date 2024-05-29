@@ -10,7 +10,7 @@ private:
     unsigned int difficulty;
     static unsigned int round;
     Player player;
-    std::unique_ptr<Enemy> enemy;
+    std::shared_ptr<Enemy> enemy;
 
     void start_round();
 
@@ -18,13 +18,17 @@ private:
 
     void ui(int action_index, int taken_damage = 0, int gained_block = 0, int spent_energy = 0);
 
-public:
-    /// Constructors and destructors
     GameManager();
+
+    static GameManager instance;
+
+public:
 
     ~GameManager();
 
+    static GameManager& get();
+
     void start();
 
-    static void gameOver(bool state);
+    void gameOver(bool state);
 };

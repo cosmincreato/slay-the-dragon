@@ -1,9 +1,6 @@
-#include <memory>
 #include "headers/gameManager.hpp"
-#include "headers/enemies/dragon.hpp"
 
 int main() {
-    GameManager game;
-    game.start();
+    GameManager::get().start();
     return 0;
 }

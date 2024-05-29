@@ -2,12 +2,15 @@
 
 #include <iostream>
 #include <memory>
+#include <algorithm>
+#include <vector>
 #include "../player.hpp"
 
 class Enemy {
-private:
+protected:
     std::string name, effect_info;
-    int attack, hp, max_hp;
+    int hp, max_hp;
+    float attack;
 public:
     ///Constructors and destructors
 
@@ -19,32 +22,36 @@ public:
 
     ///Setters
 
-    void set_attack(int _attack);
+    void set_attack(float _attack);
 
     void set_hp(int _hp);
 
     void set_max_hp(int _max_hp);
 
-    void deal_damage(Player& player, int value);
-
+    /// Template function
+    template<class T>
+    void deal_damage(Player& player, T value);
 
     ///Getters
 
     std::string get_name() const;
 
-    int get_attack() const;
+    float get_attack() const;
 
     int get_hp() const;
+
+    int get_max_hp() const;
 
     std::string get_effect_info() const;
 
     ///Operator overloading
 
-    friend std::ostream &operator<<(std::ostream &os, const Enemy &enemy);
+    friend std::ostream& operator<<(std::ostream &os, const Enemy &enemy);
 
-    friend std::ostream &operator<<(std::ostream &os, const std::unique_ptr<Enemy>& enemyPtr);
+    void operator=(Enemy& e);
 
     /// Pure virtual function
 
     virtual void effect(Player& player) = 0;
 };
+

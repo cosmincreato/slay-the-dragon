@@ -49,33 +49,33 @@ Player::Player()
     // cout << "Player Constructor\n";
 }
 
-Player::~Player() = default;
-
 void Player::set_name(std::string _name) {
     name = std::move(_name);
 }
 
-void Player::set_hp(int _hp) {
+void Player::set_hp(float _hp) {
     hp = _hp;
+    if (hp > max_hp)
+        hp = max_hp;
 }
 
 void Player::set_max_hp(int _max_hp) {
     max_hp = _max_hp;
 }
 
-void Player::set_energy(int _energy) {
-    energy = _energy;
+void Player::set_block(float _block) {
+    block = _block;
 }
 
-void Player::set_block(int _block) {
-    block = _block;
+void Player::set_energy(int _energy) {
+    energy = _energy;
 }
 
 std::string Player::get_name() const {
     return name;
 }
 
-int Player::get_hp() const {
+float Player::get_hp() const {
     return hp;
 }
 
@@ -91,7 +91,7 @@ int Player::get_max_energy() const {
     return max_energy;
 }
 
-int Player::get_block() const {
+float Player::get_block() const {
     return block;
 }
 
@@ -121,6 +121,14 @@ std::ostream &operator<<(std::ostream &os, const Player &player) {
     }
     std::cout << '\n';
     return os;
+}
+
+void Player::operator=(Player &p) {
+    name = p.name;
+    max_hp = p.max_hp;
+    energy = p.energy;
+    hp = p.hp;
+    block = p.block;
 }
 
 void Player::play(const Card &card) {
@@ -209,3 +217,5 @@ void Player::drink(unsigned int potion) {
         std::cout << "Potion already used.\n";
     }
 }
+
+Player::~Player() = default;

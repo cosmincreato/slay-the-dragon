@@ -14,5 +14,5 @@ DarkElf::~DarkElf() {
 }
 
 void DarkElf::effect(Player &player) {
-    set_attack(get_attack() + 2);
+    set_attack(get_attack() + 2.5);
 }
